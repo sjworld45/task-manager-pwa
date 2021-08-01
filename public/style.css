@@ -2,6 +2,7 @@ body {
   margin: 0;
   padding: 0;
   font-size: 16px;
+  background: white;
   /* max-width: 420px; */
 }
 
@@ -52,9 +53,12 @@ p {
 }
 
 /* -------------- Task Form -------------- */
+main {
+  margin-top: 10px;
+}
 
 .task_container {
-  width: 400px;
+  /* width: 400px; */
   margin: 0 auto;
   display: grid;
   place-content: center;
@@ -64,14 +68,35 @@ p {
   display: flex;
 }
 
+/* input {
+  border-left: 0px solid ;
+  border-radius: 2px;
+} */
+
+.submit_task_btn {
+  background: rgb(105, 43, 230);
+  color: white;
+  font-weight: bold;
+  border: none;
+}
+
 .tasks > * {
   display: block;
   margin-top: 30px;
 }
 
 .task {
-  margin: 20px;
+  margin: 10px;
+  padding: 15px 30px;
+  background-color: whitesmoke;
+  display: flex;
+  flex-direction: horizontal;
+  justify-content: space-between;
 }
+
+/* 
+.icons {
+} */
 
 .shadow {
   box-shadow: 5px 5px 5px 0 rgb(0, 0, 0, 0.6);
@@ -85,6 +110,9 @@ p {
   display: block;
 }
 
+.completed {
+  text-decoration: line-through;
+}
 /* main {
   display: grid;
   place-content: center;
