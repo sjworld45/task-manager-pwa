@@ -11,6 +11,8 @@ let user_id = ''
 let tasksRef;
 let unsubscribe;
 let serverTimestamp;
+let completed;
+let checkState = [];
 tasksRef = db.collection('tasks')
 
 
@@ -47,18 +49,27 @@ auth.onAuthStateChanged(user => {
         signIn()
         logged_in = true
         user_id = user.uid
-
         const newUser = `<h3> Hello, ${user.displayName} </h3>`
         userDetails.innerHTML = newUser
         serverTimestamp = firebase.firestore.FieldValue.serverTimestamp;
         unsubscribe = tasksRef
             .where('uid', '==', user.uid)
-            .orderBy("createdAt", "asc")
+            // .orderBy("createdAt", "asc")
+            .orderBy("completed", "asc")
             .onSnapshot(querySnapshot => {
+                checkState = []
                 const items = querySnapshot.docs.map(doc => {
-                    return newTaskDiv(doc.data().name, doc.id, serverTimestamp())
+                    checkState.push(doc.data().completed)
+                    if (doc.data().completed) {
+                        completed = "completed"
+                    }
+                    else {
+                        completed = ""
+                    }
+                    return newTaskDiv(doc.data().name, doc.id, completed )
                 })
                 task_list.innerHTML = items.join(' ')
+                changeCheckState()
             })
     }
     else {
@@ -85,9 +96,9 @@ submit_task_btn.onclick = (e) => {
 
 
 
-const newTaskDiv = (name, id) => {
+const newTaskDiv = (name, id, completed) => {
     return `<div class = "task shadow" id="${id}">
-                <p id=${id}-p>${name}</p>
+                <p id="${id}-p" class="${completed}">${name}</p>
                 <div class = "icons">
                     <input id="${id}" type="checkbox">
                     <i id="${id}" class="fa fa-trash" aria-hidden="true"></i>
@@ -98,16 +109,28 @@ const newTaskDiv = (name, id) => {
 task_list.onclick =  (e) => {
     const element = e.target
     const id = element.id
-    console.log(element.type)
     if (id){
         if( element.type == "checkbox"){
-            // console.log(document.querySelector('.icons > input'))
-            document.querySelector('.icons > input').classList.add('completed')
-            db.batch().update(tasksRef.doc(id), {"completed":element.checked})
+            if (element.checked) {
+                document.querySelector(`#${id}-p`).classList.add('completed')
+            }
+            else {
+                document.querySelector(`#${id}-p`).classList.remove('completed')
+            }
+            
+            tasksRef.doc(id).update({"completed":element.checked})
         }
         else {
-            tasksRef.doc(id).delete().then(console.log(`item with id ${id}, deleted`))
+            tasksRef.doc(id).delete().then(console.log(`item with id ${id} was deleted`))
         }
     }
     
+}
+
+const changeCheckState = ()=> {
+    let i = 0;
+    document.querySelectorAll('.icons input').forEach(el => {
+        el.checked = checkState[i]
+        i++;
+    })
 }

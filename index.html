@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Task Manager</title>
+    <link rel="stylesheet" href="./public/style.css" />
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-app.js"></script>
+
+    <!-- TODO: Add SDKs for Firebase products that you want to use
+        https://firebase.google.com/docs/web/setup#available-libraries -->
+    <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-firestore.js"></script>
+
+    <script>
+      // Your web app's Firebase configuration
+      var firebaseConfig = {
+        apiKey: "AIzaSyCxMck5qIefFI5abgAb-v3weU-NZbocY1o",
+        authDomain: "task-manager-pwa-1.firebaseapp.com",
+        projectId: "task-manager-pwa-1",
+        storageBucket: "task-manager-pwa-1.appspot.com",
+        messagingSenderId: "161864971268",
+        appId: "1:161864971268:web:5d4fe4ad40cddb34ab3151",
+      };
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+    </script>
+    <script src="./public/app.js" defer></script>
+    <script src="https://use.fontawesome.com/b816dbdc39.js"></script>
+  </head>
+
+  <body>
+    <!-- Header -->
+    <div class="container">
+      <nav class="nav-container">
+        <ul class="navbar">
+          <li class="nav-item">
+            <h2 class="logo">TM</h2>
+          </li>
+          <div class="nav-btns">
+            <li class="nav-item">
+              <button class="btn signInBtn visible">Sign In</button>
+            </li>
+            <li class="nav-item">
+              <button class="btn signOutBtn hidden">Sign Out</button>
+            </li>
+          </div>
+        </ul>
+      </nav>
+
+      <div class="user-details shadow"></div>
+
+      <main>
+        <div class="task_container">
+          <div class="task_form shadow">
+            <form>
+              <div class="enter_new_task">
+                <input
+                  type="text"
+                  name="task"
+                  class="task_input"
+                  placeholder="eg. Do Chore XYZ"
+                />
+                <button type="submit" class="submit_task_btn">Submit</button>
+              </div>
+            </form>
+          </div>
+          <div class="tasks_list"></div>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>
