@@ -5,6 +5,8 @@ const FILES_TO_CACHE = [
     'manifest.json',
     'index.html',
     'fallback.html',
+    'tm_144.png',
+    'tm_512.png'
 ]
 
 

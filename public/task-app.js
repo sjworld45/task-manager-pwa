@@ -130,7 +130,7 @@ task_list.onclick =  (e) => {
             
             tasksRef.doc(id).update({"completed":element.checked})
         }
-        else {
+        else if (element.classList.contains('fa')) {
             tasksRef.doc(id).delete().then(console.log(`item with id ${id} was deleted`))
         }
     }
