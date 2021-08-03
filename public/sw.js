@@ -1,10 +1,11 @@
-const CACHE_NAME = 'cache-v0.0'
+const CACHE_NAME = 'cache-v0.1'
 const dynamic_cache = 'dynamic-cache-v0.0'
 const FILES_TO_CACHE = [
     'app.js',
     'manifest.json',
     'index.html',
     'fallback.html',
+    'auth.json',
     'tm_144.png',
     'tm_512.png'
 ]

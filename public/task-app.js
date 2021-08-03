@@ -1,59 +1,17 @@
-const signInBtn = document.querySelector('.signInBtn')
-const signOutBtn = document.querySelector('.signOutBtn')
 const userDetails = document.querySelector('.user-details')
 const task_input = document.querySelector('.task_input')
 const submit_task_btn = document.querySelector('.submit_task_btn')
-const main = document.querySelector('main')
-const db = firebase.firestore()
 const task_list = document.querySelector('.tasks_list')
 let logged_in = false
 let user_id = ''
-let tasksRef;
 let unsubscribe;
 let serverTimestamp;
 let completed;
 let checkState = [];
-tasksRef = db.collection('tasks')
 
-// enable offline mode
-db.enablePersistence()
-  .catch(function(err) {
-    if (err.code == 'failed-precondition') {
-      // probably multible tabs open at once
-      console.log('persistance failed');
-    } else if (err.code == 'unimplemented') {
-      // lack of browser support for the feature
-      console.log('persistance not available');
-    }
-  });
+console.log('app is ready')
 
-// authentication
-const signIn = () => {
-        signInBtn.classList.remove('visible')
-        signInBtn.classList.add('hidden')
-        signOutBtn.classList.remove('hidden')
-        signOutBtn.classList.add('visible')
-        main.classList.add('visible')
-        
-    }
-    
-    const signOut = () => {
-        signInBtn.classList.remove('hidden')
-        signInBtn.classList.add('visible')
-        signOutBtn.classList.remove('visible')
-        signOutBtn.classList.add('hidden')
-        main.classList.add('hidden')
-}
-
-const auth = firebase.auth()
-
-const provider = new firebase.auth.GoogleAuthProvider()
-
-signInBtn.onclick = () => {
-    auth.signInWithPopup(provider)
-}
-
-signOutBtn.onclick = () => auth.signOut();
+// real-time data
 
 auth.onAuthStateChanged(user => {
     if (user) {
@@ -69,6 +27,8 @@ auth.onAuthStateChanged(user => {
             .orderBy("completed", "asc")
             .onSnapshot(querySnapshot => {
                 checkState = []
+                // task_list.innnerHTML = ''
+                // console.log('change')
                 const items = querySnapshot.docs.map(doc => {
                     checkState.push(doc.data().completed)
                     if (doc.data().completed) {
@@ -79,6 +39,7 @@ auth.onAuthStateChanged(user => {
                     }
                     return newTaskDiv(doc.data().name, doc.id, completed )
                 })
+                
                 task_list.innerHTML = items.join(' ')
                 changeCheckState()
             })
@@ -105,29 +66,24 @@ submit_task_btn.onclick = (e) => {
     
 }
 
-
 const newTaskDiv = (name, id, completed) => {
+
     return `<div class = "task shadow" id="${id}">
                 <p id="${id}-p" class="${completed}">${name}</p>
                 <div class = "icons">
-                    <input id="${id}" type="checkbox">
-                    <i id="${id}" class="fa fa-trash" aria-hidden="true"></i>
+                    <input type="checkbox">
+                    <i class="fa fa-trash" aria-hidden="true"></i>
                 </div>
             </div>`
 }
 
 task_list.onclick =  (e) => {
     const element = e.target
-    const id = element.id
+    // console.log(element.innerHTML)
+    const id = element.parentElement.parentElement.id
     if (id){
         if( element.type == "checkbox"){
-            if (element.checked) {
-                document.querySelector(`#${id}-p`).classList.add('completed')
-            }
-            else {
-                document.querySelector(`#${id}-p`).classList.remove('completed')
-            }
-            
+            document.querySelector(`#${id}-p`).classList.toggle('completed')
             tasksRef.doc(id).update({"completed":element.checked})
         }
         else if (element.classList.contains('fa')) {
@@ -144,3 +100,54 @@ const changeCheckState = ()=> {
         i++;
     })
 }
+
+
+    // const div_li = document.createElement(`div`)
+    // const name_p = document.createElement(`name_p`)
+    // const icons = document.createElement(`div`)
+    // const checkbox = document.createElement('input')
+    // const trash = document.createElement('i')
+
+    // div_li.classList.add('task','shadow')
+    // div_li.setAttribute('id', `${id}`)
+
+    // if (completed) {
+    //     name_p.classList.add(`${completed}`)
+    // }
+
+    // name_p.textContent = name
+    // name_p.setAttribute('id',id+'-p')
+
+    // icons.classList.add('icons')
+
+    // checkbox.setAttribute('type', 'checkbox')
+
+    // trash.classList.add('fa', 'fa-trash')
+    // trash.setAttribute('aria-hidden', 'true')
+
+    // icons.appendChild(checkbox)
+    // icons.appendChild(trash)
+
+    // div_li.appendChild(name_p)
+    // div_li.appendChild(icons)
+
+    // console.log(div_li)
+    // task_list.innnerHTML = ''
+    // task_list.appendChild(div_li)
+
+    // return div_li
+
+                    // querySnapshot.docChanges().forEach(change => {
+                //     if (change.type === "added") {
+                //         console.log('add')
+                //         console.log(change.doc.data())
+                //     }
+                //     if (change.type === "removed") {
+                //         console.log('rem')
+                //         console.log(change)
+                //     }
+                //     if (change.type === "modified") {
+                //         console.log('mod')
+                //         console.log(change.doc.data())
+                //     }
+                // })
