@@ -80,6 +80,10 @@ main {
   border: none;
 }
 
+.task-list {
+  width: 90%;
+}
+
 .tasks > * {
   display: block;
   margin-top: 30px;

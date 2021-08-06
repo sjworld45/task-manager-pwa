@@ -1,50 +1,63 @@
-const CACHE_NAME = 'cache-v0.1'
-const dynamic_cache = 'dynamic-cache-v0.0'
+const STATIC_CACHE = 'cache-v0.1.8'
+const dynamic_cache = 'dynamic-cache-v0.4'
 const FILES_TO_CACHE = [
-    'app.js',
-    'manifest.json',
-    'index.html',
-    'fallback.html',
-    'auth.json',
-    'tm_144.png',
-    'tm_512.png'
+  '/',
+  '/manifest.json',
+  '/index.html',
+  '/style.css',
+  '/fallback.html',
+  '/task-app.js',
+  '/app.js',
+  '/db.js',
+  '/auth.js',
+  '/tm_144.png',
+  '/tm_192.png',
+  '/tm_512.png',
 ]
 
-
-self.addEventListener('install', e => e.waitUntil(
-  // add or addAll goes out to the server gets the files to be cached
-  caches.open(CACHE_NAME).then(c => c.addAll(FILES_TO_CACHE))));
+// install Event
+self.addEventListener('install', evt => {
+  console.log('sw installed')
+  evt.waitUntil(
+  // waits until all the files are cached
+    caches.open(STATIC_CACHE)
+      .then((cache) => cache.addAll(FILES_TO_CACHE))
+      .catch(err => console.log('error', err)))}
+)
 
 // activate event
-self.addEventListener('activate', e => {
-  // waitUnitl waits for the callback to finish
-  e.waitUntil(
-      caches.keys().then(keys => {
-        console.log('service worker has been activated');
-        return Promise.all(keys
-          .filter(key => key !== CACHE_NAME && key != dynamic_cache)
+self.addEventListener('activate', evt => {
+  evt.waitUntil(
+    caches.keys().then(keys => {
+      console.log('service worker has been activated')
+      return Promise.all(keys
+          .filter(key => key !== STATIC_CACHE)
           .map(key => caches.delete(key)))
-      })
-    )
-})
-
-// fetching from cache or server
-self.addEventListener('fetch', e => e.respondWith(
-  caches.match(e.request).then((r) => {
-    return r ||
-    // dynamic caching lets us cache all requests that are not part of the precache
-     fetch(e.request).then(fetchRes => {
-      return caches.open(dynamic_cache).then(cache => {
-        cache.put(e.request.url, fetchRes.clone());
-        return fetchRes;
-      })
-    }).catch(() => { 
-      //fallbacks to a page only when the request is for a page
-      if (e.request.url.indexOf('.html') > -1)
-      {
-        return caches.match('/fallback.html')
-      }
-      // else if (e.request.url.indexOf('.png'))
     })
-  })
-));
+  )
+}
+)
+
+// fetch event 
+self.addEventListener('fetch', evt => {
+  console.log(evt.request.url)
+  evt.respondWith(
+    caches.match(evt.request).then(cacheRes => {
+      // console.log(cacheRes.clone(), evt.request.url)
+      return cacheRes ||
+      fetch(evt.request)
+        .then(fetchRes => {
+          console.log(fetchRes.clone(), evt.request.url)
+          return caches.open(dynamic_cache).then(cache => {
+            if (evt.request.url.indexOf('fire') === -1
+             && evt.request.url.indexOf('google') === -1)
+            {
+              cache.put(evt.request.url, fetchRes.clone())
+            }
+            return fetchRes
+          })
+        })
+        .catch(err => console.log('page missing',evt.request.url))
+    })
+  )
+})
